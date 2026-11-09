@@ -1,0 +1,13 @@
+daslisp is an implementation of the Make a Lisp (MAL) language in daScript.
+
+Language design, guide, test suite, and the Lisp bootstrap definitions for
+not/load-file/cond: kanaka/mal, copyright Joel Martin and contributors, MPL-2.0.
+https://github.com/kanaka/mal
+Reference test revision: 2bbfaa54cca4908efc90b4173b1406e260788e8a
+
+The Nim implementation and Dennis Felsing's article were consulted as references:
+https://github.com/kanaka/mal/tree/master/impls/nim
+https://hookrace.net/blog/make-a-lisp-in-nim/
+
+The implementation uses daScript's standard library and bundled dasPEG module;
+these dependencies are supplied by the user's daScript SDK, not vendored here.

@@ -1,0 +1,2707 @@
+{
+  "method": {
+    "date": "2026-11-09",
+    "cpu": "Intel(R) Core(TM) i9-14900HX",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "repeats": 3,
+    "cpp_compiler": "MSVC 19.44.35229 x64, CMake Release /O2, matching SDK DLL defines",
+    "source_article": "https://hookrace.net/blog/make-a-lisp-in-nim/",
+    "mal_revision": "2bbfaa54cca4908efc90b4173b1406e260788e8a",
+    "original_fixtures": "unchanged perf1.mal/perf2.mal/perf3.mal",
+    "perf3_unit": "printed iterations over 10 seconds divided by 10; not full-process wall throughput",
+    "perf3_warmup": "unchanged upstream 1 second of accumulated function-body time",
+    "batches": "exact timed body extracted from perf1/2, 100 warmup iterations then 1000 timed iterations, MAL loop and all in-eval GC included",
+    "scheduling": "sequential processes, rotated/reversed implementation order between rounds; no other agent tests/builds during measurements",
+    "memory": "Windows process peak private commit MiB; max of three samples; includes host startup; process cap 1024MiB",
+    "time_limit_s": 180,
+    "jvm_heap": "-Xms32m -Xmx512m for both Java and Scala",
+    "javascript_heap": "--max-old-space-size=512",
+    "statistics": "medians of 3 independent process samples; ranges preserved; no significance claim from tiny differences",
+    "source_size": "decoded Unicode characters with CRLF normalized to LF; comments/blank lines included; runtime source only, excludes tests, generated C++, benchmark harness, SDK and libraries"
+  },
+  "adaptations": {
+    "das": "common benchmark entry preserves file mode; omits SDK heap_collect between REPL lines because native frames cannot be scanned; Lisp VM GC remains enabled. CLI --backend verifies main/eval/native_call/read_all/collect.",
+    "peg": "only the SDK blanket no_aot flags in peg.das and detail/colors.das are temporarily changed for C++ generation and immediately restored byte-for-byte. Parser uses bool markers for rules without AST nodes to avoid C++ void*/Syntax* generic specialization collision.",
+    "root_fix": "native apply fast return ran an enclosing defer before its marker was initialized; a separate lexical block fixes caller-root deletion. Nine regressions fail on old code and pass on fixed code.",
+    "nim": "unmodified upstream algorithm; equality proc annotated noSideEffect in a private copy for Nim 2.4 compiler compatibility; -d:release, --cc:vcc, upstream markAndSweep GC",
+    "stdin": "Python and JavaScript use Windows stdin-only adapters; no evaluator/reader/core changes; history is disabled; Java uses upstream --raw"
+  },
+  "versions": {
+    "das": "0.6.5",
+    "nim": "Nim Compiler Version 2.4.0 [Windows: amd64]\nCompiled at 2026-10-28\nCopyright (c) 2006-2026 by Andreas Rumpf\n\nactive boot switches: -d:release",
+    "java": "openjdk version \"1.8.0_512\"\r\nOpenJDK Runtime Environment (Temurin)(build 1.8.0_512-b09)\r\nOpenJDK 64-Bit Server VM (Temurin)(build 25.512-b09, mixed mode)",
+    "scala": "Scala compiler version 2.11.4 -- Copyright 2002-2013, LAMP/EPFL",
+    "javascript": "v22.3.0",
+    "python": "Python 3.12.4"
+  },
+  "summary": {
+    "das-interpreter": {
+      "perf1": {
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "samples": [
+          1,
+          1,
+          1
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.3592173999932129,
+        "peak_commit_mib_max": 116.58984375
+      },
+      "perf2": {
+        "median": 3,
+        "min": 2,
+        "max": 3,
+        "samples": [
+          2,
+          3,
+          3
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.36061329999938607,
+        "peak_commit_mib_max": 116.76953125
+      },
+      "perf3": {
+        "median": 859.6,
+        "min": 856.9,
+        "max": 861.1,
+        "samples": [
+          861.1,
+          856.9,
+          859.6
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.532444399999804,
+        "peak_commit_mib_max": 118.69140625
+      },
+      "batch-perf1": {
+        "median": 1150.0,
+        "min": 1133.0,
+        "max": 1152.0,
+        "samples": [
+          1133.0,
+          1152.0,
+          1150.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 1.628296800001408,
+        "peak_commit_mib_max": 116.85546875
+      },
+      "batch-perf2": {
+        "median": 2943.0,
+        "min": 2916.0,
+        "max": 3009.0,
+        "samples": [
+          2943.0,
+          3009.0,
+          2916.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 3.612755100009963,
+        "peak_commit_mib_max": 117.0
+      }
+    },
+    "das-jit": {
+      "perf1": {
+        "median": 1,
+        "min": 0,
+        "max": 1,
+        "samples": [
+          1,
+          0,
+          1
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.39152719998674,
+        "peak_commit_mib_max": 136.8046875
+      },
+      "perf2": {
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "samples": [
+          0,
+          0,
+          0
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.3864064999943366,
+        "peak_commit_mib_max": 136.609375
+      },
+      "perf3": {
+        "median": 9972.0,
+        "min": 9953.4,
+        "max": 10009.8,
+        "samples": [
+          9953.4,
+          10009.8,
+          9972.0
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.543925499994657,
+        "peak_commit_mib_max": 203.5859375
+      },
+      "batch-perf1": {
+        "median": 99.0,
+        "min": 98.0,
+        "max": 101.0,
+        "samples": [
+          101.0,
+          98.0,
+          99.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.48538910000934266,
+        "peak_commit_mib_max": 139.3984375
+      },
+      "batch-perf2": {
+        "median": 260.0,
+        "min": 259.0,
+        "max": 262.0,
+        "samples": [
+          259.0,
+          262.0,
+          260.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.6634931000007782,
+        "peak_commit_mib_max": 139.328125
+      }
+    },
+    "das-aot-cpp": {
+      "perf1": {
+        "median": 0,
+        "min": 0,
+        "max": 1,
+        "samples": [
+          1,
+          0,
+          0
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.055915100005222484,
+        "peak_commit_mib_max": 29.26953125
+      },
+      "perf2": {
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "samples": [
+          1,
+          1,
+          1
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.054086100004496984,
+        "peak_commit_mib_max": 28.8203125
+      },
+      "perf3": {
+        "median": 7834.4,
+        "min": 7593.1,
+        "max": 7892.7,
+        "samples": [
+          7892.7,
+          7593.1,
+          7834.4
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.202650799998082,
+        "peak_commit_mib_max": 64.109375
+      },
+      "batch-perf1": {
+        "median": 126.0,
+        "min": 125.0,
+        "max": 126.0,
+        "samples": [
+          125.0,
+          126.0,
+          126.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.18158089999633376,
+        "peak_commit_mib_max": 32.30078125
+      },
+      "batch-perf2": {
+        "median": 339.0,
+        "min": 338.0,
+        "max": 341.0,
+        "samples": [
+          338.0,
+          341.0,
+          339.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.41416479999315925,
+        "peak_commit_mib_max": 32.1953125
+      }
+    },
+    "nim": {
+      "perf1": {
+        "median": 1,
+        "min": 0,
+        "max": 2,
+        "samples": [
+          0,
+          1,
+          2
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.03164889999607112,
+        "peak_commit_mib_max": 2.4609375
+      },
+      "perf2": {
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "samples": [
+          1,
+          1,
+          1
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.029854699998395517,
+        "peak_commit_mib_max": 3.47265625
+      },
+      "perf3": {
+        "median": 4976.5,
+        "min": 4901.5,
+        "max": 4991.2,
+        "samples": [
+          4991.2,
+          4976.5,
+          4901.5
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.282696500013117,
+        "peak_commit_mib_max": 6.3203125
+      },
+      "batch-perf1": {
+        "median": 175.0,
+        "min": 175.0,
+        "max": 177.0,
+        "samples": [
+          177.0,
+          175.0,
+          175.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.23359350000100676,
+        "peak_commit_mib_max": 6.32421875
+      },
+      "batch-perf2": {
+        "median": 653.0,
+        "min": 645.0,
+        "max": 658.0,
+        "samples": [
+          645.0,
+          658.0,
+          653.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.740159599998151,
+        "peak_commit_mib_max": 6.37109375
+      }
+    },
+    "java": {
+      "perf1": {
+        "median": 2,
+        "min": 2,
+        "max": 2,
+        "samples": [
+          2,
+          2,
+          2
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.2612557999964338,
+        "peak_commit_mib_max": 155.29296875
+      },
+      "perf2": {
+        "median": 4,
+        "min": 3,
+        "max": 4,
+        "samples": [
+          3,
+          4,
+          4
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.2565905999945244,
+        "peak_commit_mib_max": 150.52734375
+      },
+      "perf3": {
+        "median": 24537.8,
+        "min": 24438.8,
+        "max": 24816.0,
+        "samples": [
+          24537.8,
+          24816.0,
+          24438.8
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.577796300000045,
+        "peak_commit_mib_max": 342.15234375
+      },
+      "batch-perf1": {
+        "median": 116.0,
+        "min": 116.0,
+        "max": 121.0,
+        "samples": [
+          116.0,
+          121.0,
+          116.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.39085210001212545,
+        "peak_commit_mib_max": 248.62109375
+      },
+      "batch-perf2": {
+        "median": 201.0,
+        "min": 200.0,
+        "max": 201.0,
+        "samples": [
+          200.0,
+          201.0,
+          201.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.469808900001226,
+        "peak_commit_mib_max": 256.87890625
+      }
+    },
+    "scala": {
+      "perf1": {
+        "median": 4,
+        "min": 2,
+        "max": 11,
+        "samples": [
+          11,
+          2,
+          4
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.4337167000048794,
+        "peak_commit_mib_max": 169.50390625
+      },
+      "perf2": {
+        "median": 11,
+        "min": 11,
+        "max": 13,
+        "samples": [
+          11,
+          11,
+          13
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.43371889999252744,
+        "peak_commit_mib_max": 169.94921875
+      },
+      "perf3": {
+        "median": 11243.9,
+        "min": 11242.5,
+        "max": 11272.1,
+        "samples": [
+          11242.5,
+          11272.1,
+          11243.9
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.732629199992516,
+        "peak_commit_mib_max": 368.23046875
+      },
+      "batch-perf1": {
+        "median": 148.0,
+        "min": 145.0,
+        "max": 157.0,
+        "samples": [
+          148.0,
+          157.0,
+          145.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.6169184000027599,
+        "peak_commit_mib_max": 264.10546875
+      },
+      "batch-perf2": {
+        "median": 200.0,
+        "min": 193.0,
+        "max": 200.0,
+        "samples": [
+          200.0,
+          200.0,
+          193.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.6942337000073167,
+        "peak_commit_mib_max": 274.5078125
+      }
+    },
+    "javascript": {
+      "perf1": {
+        "median": 1,
+        "min": 1,
+        "max": 2,
+        "samples": [
+          2,
+          1,
+          1
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.10677980000036769,
+        "peak_commit_mib_max": 14.66796875
+      },
+      "perf2": {
+        "median": 2,
+        "min": 2,
+        "max": 3,
+        "samples": [
+          2,
+          3,
+          2
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.1039154000027338,
+        "peak_commit_mib_max": 15.9609375
+      },
+      "perf3": {
+        "median": 5607.2,
+        "min": 5520.8,
+        "max": 5611.1,
+        "samples": [
+          5611.1,
+          5520.8,
+          5607.2
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.370722499996191,
+        "peak_commit_mib_max": 78.8203125
+      },
+      "batch-perf1": {
+        "median": 184.0,
+        "min": 180.0,
+        "max": 191.0,
+        "samples": [
+          191.0,
+          180.0,
+          184.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.30882480001309887,
+        "peak_commit_mib_max": 20.9609375
+      },
+      "batch-perf2": {
+        "median": 481.0,
+        "min": 472.0,
+        "max": 485.0,
+        "samples": [
+          485.0,
+          472.0,
+          481.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 0.6375789000012446,
+        "peak_commit_mib_max": 19.56640625
+      }
+    },
+    "python": {
+      "perf1": {
+        "median": 4,
+        "min": 0,
+        "max": 7,
+        "samples": [
+          4,
+          7,
+          0
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.16325589999905787,
+        "peak_commit_mib_max": 11.0234375
+      },
+      "perf2": {
+        "median": 14,
+        "min": 12,
+        "max": 20,
+        "samples": [
+          20,
+          14,
+          12
+        ],
+        "unit": "ms, original MAL millisecond timer",
+        "wall_s_median": 0.19052440000814386,
+        "peak_commit_mib_max": 11.01953125
+      },
+      "perf3": {
+        "median": 302.3,
+        "min": 299.9,
+        "max": 306.2,
+        "samples": [
+          299.9,
+          302.3,
+          306.2
+        ],
+        "unit": "iterations/s, MAL accumulated-body timer",
+        "wall_s_median": 11.37760910000361,
+        "peak_commit_mib_max": 13.0234375
+      },
+      "batch-perf1": {
+        "median": 3227.0,
+        "min": 3158.0,
+        "max": 3234.0,
+        "samples": [
+          3234.0,
+          3158.0,
+          3227.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 3.7095780999952694,
+        "peak_commit_mib_max": 12.10546875
+      },
+      "batch-perf2": {
+        "median": 11370.0,
+        "min": 11360.0,
+        "max": 11487.0,
+        "samples": [
+          11360.0,
+          11487.0,
+          11370.0
+        ],
+        "unit": "us/body, including MAL loop and in-eval GC",
+        "wall_s_median": 12.70381800000905,
+        "peak_commit_mib_max": 11.0625
+      }
+    }
+  },
+  "source_stats": {
+    "das": {
+      "lines": 1552,
+      "words": 7643,
+      "chars": 58475,
+      "files": {
+        "main.das": "0ef4dc0343eb81385c2d8facc76b925c899e5c3f7a1aa8d3a11d0066e68e444d",
+        "reader.das": "46f7df3e8ad46fc32c1a54048eb80d8b4a180be93bc52461ebab2c795830e5fc",
+        "printer.das": "d00821be7ffb515f1e14497456e8850890480d8bb3f16cca31141f0e96d4b818",
+        "runtime.das": "4a38f713d16ff3103e309e1da30d1ecd7f66760de92e3e0d31f7304aced8eae2",
+        "memory.das": "93c66d816b1eb82e8e4e79b08c12c1fa4141999362ffe1802b7613403c08f978",
+        "types.das": "45367328213b53f14aa0618bce569c63d055662a623cb6d1b3c949afe068f9b3",
+        "line_input.das": "48e88b8282950513062d54d0cfa029356be80833b85946e83a1c98d4199e059b"
+      }
+    },
+    "nim": {
+      "lines": 771,
+      "words": 2655,
+      "chars": 21942,
+      "files": {
+        "types.nim": "8ae2575918b671f07c9d025271031efafe990a81f428d83caa7c212c3749cfb0",
+        "reader.nim": "b96d50105e5413a69ab610280ce3d87826ae2c1883d15f91ed0377c86de43c7e",
+        "printer.nim": "c39676985392e34ce8860458e07a38f72c8f8f289a51ef134924ac80624553c2",
+        "env.nim": "3970f6d41a376f6e38ef1882467c58f2e109bc14347e067c88d611c11b02a6ba",
+        "core.nim": "f14d949fdbfa3c521ccea69afbcd584f74dc24304ca9d33c3f12ce612c0430d8",
+        "stepA_mal.nim": "2b9b110e51937d618ab1e5bd04abec695b5cf3b438a81cb83224c471434b9e29"
+      }
+    },
+    "scala": {
+      "lines": 935,
+      "words": 3305,
+      "chars": 26234,
+      "files": {
+        "types.scala": "0cd6d52717f34685043af6a9e2c4d2f81780a5e090ae3af20a50e1db73636319",
+        "reader.scala": "46ac359a762aa9ba0986e0df8ca012193be99ad1a638aec521dafd497f1bb716",
+        "printer.scala": "0c55ad072f87e34350dbeefcb65e8287b2962fc3c2717cbaa35651ed55b2003f",
+        "env.scala": "19f20231dd628cc9a528f3c593f56fccfa7b23b0f17fa49bacc0da11d41f8d12",
+        "core.scala": "e204ddd268cf3d367f253b3a5f0b603babe4df6bced290767448a713a7d5abd5",
+        "stepA_mal.scala": "03c861bdce49e7415ee4e134975a4928835061335c9f69c6277244da0e916964"
+      }
+    },
+    "java": {
+      "lines": 1644,
+      "words": 5260,
+      "chars": 55816,
+      "files": {
+        "readline.java": "9651d58003656b4a32211a98af52f53a846da1a199d2e3708f87a67a9e82438b",
+        "types.java": "0bddd57d18f6ba68942795137f08e493e7fc737c98ea8fdee040cbe97e8c5171",
+        "reader.java": "d666a7dc48b8c0bb0d0bffdb0ddd9ab67d3a40cfbcaad8d150bcc3bc130d71ec",
+        "printer.java": "b52b295f5d9f49f0fec2e35882591655e25477bb5f7b20e4f409c284d6a463b5",
+        "env.java": "49bd1ed674554505e71a0192da943b8e3e2f1916872d035454331f00ab8185a4",
+        "core.java": "e5ffef81a05c31393083c389a0b0a91cf6c4b1bc47cdd0daeae50cd28fa9df95",
+        "stepA_mal.java": "8902cc22555bec7e2e2e6ab73ceb97b34fcceb3bb3f9257b901362c1523ba3db"
+      }
+    },
+    "javascript": {
+      "lines": 1013,
+      "words": 3418,
+      "chars": 29152,
+      "files": {
+        "node_readline.js": "34163e8b1c46c82367be0f9f56af087673421381117299aaa9c576211b81d3db",
+        "types.js": "3fa86ce18b48bc3d4fcc5f12f0b8e520385df768538bf2d9bc375bbea12656bb",
+        "reader.js": "2590c775c3221653e990bbc09c0a2eb2786396b84ad14e4b422c448d48866b34",
+        "printer.js": "7a8e16397fbe7b638e4481eff1ed98a5ea93e85c3001ef2f43f162a5cdc136c6",
+        "interop.js": "baf7a3f518d241dc11c22760b2a031fae7d76ff77d21e6771e6eae582f500941",
+        "env.js": "64bb6398617eb0f007982a004d4b32273d74299586577a1576f127014ff2d929",
+        "core.js": "04fe44b8bfddfdba558ed2aa3c64e7906e097e1849c7a7ce6a78a696a6f03ceb",
+        "stepA_mal.js": "f0d8fdbed47828f9a22ec49cc99bb0bd7dae20162045f8306d840d6465d05784"
+      }
+    },
+    "python": {
+      "lines": 1187,
+      "words": 3436,
+      "chars": 33555,
+      "files": {
+        "mal_readline.py": "047673381263444fcb3c2920b2a22b5414cb12c9c6c89b967b45207778173a9e",
+        "mal_types.py": "fdf6a23b082b8048e107079bb12fc4ab22de58c47f58259480cd9318cfaca921",
+        "reader.py": "c9557c518ffcebd7b3f7649561c6cf7f51b46e402472ae1ac91d91a09622f067",
+        "env.py": "2b49c8bf48b67721f81481b4abe1e16df60bba368fd1a2c8451123fb3068eab2",
+        "core.py": "92bd0beba0d642090c6e9516699bda56f4a79f01225379a119de37b9503796ef",
+        "stepA_mal.py": "a9d181bdcdbb1423ed1f78daebe2703afb71d0b3b5b714c80b1894246a6da66b"
+      }
+    }
+  },
+  "conformance": {
+    "das-interpreter": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    },
+    "das-jit": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    },
+    "das-aot-cpp": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    },
+    "nim": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    },
+    "java": {
+      "passed": 918,
+      "failed": 5,
+      "failures": [
+        {
+          "suite": "step1_read_print.mal",
+          "line": 252,
+          "form": "(read-string \"^2 [1 2 3]\")",
+          "expected": "\\(with\\-meta\\ \\[1\\ 2\\ 3\\]\\ 2\\)\\Z",
+          "output": "nil"
+        },
+        {
+          "suite": "stepA_mal.mal",
+          "line": 282,
+          "form": "(= [1] ^2 [1])",
+          "expected": "true\\Z",
+          "output": "Error: unexpected ')'"
+        },
+        {
+          "suite": "stepA_mal.mal",
+          "line": 285,
+          "form": "(= '(1) ^2 '(1))",
+          "expected": "true\\Z",
+          "output": "Error: unexpected ')'"
+        },
+        {
+          "suite": "stepA_mal.mal",
+          "line": 288,
+          "form": "(= {\"a\" 1} ^2 {\"a\" 1})",
+          "expected": "true\\Z",
+          "output": "Error: unexpected ')'"
+        },
+        {
+          "suite": "stepA_mal.mal",
+          "line": 291,
+          "form": "(= '(1) ^2 [1])",
+          "expected": "true\\Z",
+          "output": "Error: unexpected ')'"
+        }
+      ]
+    },
+    "scala": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    },
+    "javascript": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    },
+    "python": {
+      "passed": 923,
+      "failed": 0,
+      "failures": []
+    }
+  },
+  "preflight": {
+    "das-interpreter": {
+      "backend": "BACKEND main_jit=false main_aot=false eval_jit=false eval_aot=false native_jit=false native_aot=false reader_jit=false reader_aot=false gc_jit=false gc_aot=false\r\n",
+      "backend_exit": 0,
+      "backend_wall_s": 0.41280300001380965,
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "das-jit": {
+      "backend": "BACKEND main_jit=true main_aot=false eval_jit=true eval_aot=false native_jit=true native_aot=false reader_jit=true reader_aot=false gc_jit=true gc_aot=false\r\n",
+      "backend_exit": 0,
+      "backend_wall_s": 0.540443799996865,
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "das-aot-cpp": {
+      "backend": "BACKEND main_jit=false main_aot=true eval_jit=false eval_aot=true native_jit=false native_aot=true reader_jit=false reader_aot=true gc_jit=false gc_aot=true\r\n",
+      "backend_exit": 0,
+      "backend_wall_s": 0.10850020000361837,
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "nim": {
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "java": {
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "scala": {
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "javascript": {
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    },
+    "python": {
+      "exit_code": 0,
+      "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+      "stderr": ""
+    }
+  },
+  "cold_jit_after_source_change": {
+    "backend": "BACKEND main_jit=true main_aot=false eval_jit=true eval_aot=false native_jit=true native_aot=false reader_jit=true reader_aot=false gc_jit=true gc_aot=false\r\n",
+    "backend_exit": 0,
+    "backend_wall_s": 7.115431799989892,
+    "exit_code": 0,
+    "correctness_output": "7\n144\n(0 1 2 3 4 5 6 7 8 9)\n42\n",
+    "stderr": ""
+  },
+  "build": {
+    "aot-generation": {
+      "command": [
+        "C:\\src\\daScript\\bin\\Release\\daslang.exe",
+        "C:\\src\\daScript\\utils\\aot\\main.das",
+        "--",
+        "-ctx",
+        "<workdir>\\work\\compare\\source\\bench_main.das",
+        "<workdir>\\work\\compare\\aot/"
+      ],
+      "exit_code": 0,
+      "wall_s": 1.2598098000016762,
+      "sdk_original_sha256": {
+        "C:\\src\\daScript\\modules\\dasPEG\\peg\\peg.das": "051b92bccbf1edabbd69ec93aca60f554ac95db8e63d2b0a4e8575ab448cf658",
+        "C:\\src\\daScript\\modules\\dasPEG\\peg\\detail\\colors.das": "1ee4ebd92ba22de9e18f163904a538fffbdff876814cb85915c112254aa7814c"
+      },
+      "output_head": []
+    },
+    "aot-build": {
+      "command": [
+        "cmake",
+        "--build",
+        "<workdir>\\work\\compare\\build\\aot",
+        "--config",
+        "Release",
+        "--parallel",
+        "1",
+        "--",
+        "/nr:false"
+      ],
+      "wall_s": 26.391067999997176,
+      "exit_code": 0,
+      "exe_sha256": "b8ae1fe4f55b275fdabd12a4f0b2525274c7b51908527e65ebf5e06f73554867",
+      "exe_bytes": 499712
+    }
+  },
+  "historical_2015_reference": {
+    "java": [
+      6,
+      24,
+      17969
+    ],
+    "scala": [
+      47,
+      87,
+      15963
+    ],
+    "nim": [
+      1,
+      1,
+      11121
+    ],
+    "javascript": [
+      6,
+      14,
+      1726
+    ],
+    "python": [
+      14,
+      51,
+      304
+    ]
+  },
+  "measurements": {
+    "date": "2026-11-09",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "processor_identifier": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "repeat": 3,
+    "mal_revision": "2bbfaa54cca4908efc90b4173b1406e260788e8a",
+    "commands": {
+      "das-interpreter": [
+        "C:/src/daScript/bin/Release/daslang.exe",
+        "<workdir>\\work\\compare\\source\\bench_main.das",
+        "--"
+      ],
+      "das-jit": [
+        "C:/src/daScript/bin/Release/daslang.exe",
+        "-jit",
+        "-output",
+        "<workdir>\\work\\compare\\build\\daslisp-jit.dll",
+        "<workdir>\\work\\compare\\source\\bench_main.das",
+        "--"
+      ],
+      "das-aot-cpp": [
+        "<workdir>\\work\\compare\\build\\aot\\Release\\daslisp-aot.exe"
+      ],
+      "nim": [
+        "<workdir>\\work\\compare\\build\\nim-mal.exe"
+      ],
+      "java": [
+        "<workdir>\\work\\compare\\deps\\jdk8u512-b09\\bin\\java.exe",
+        "-Xms32m",
+        "-Xmx512m",
+        "-cp",
+        "<workdir>\\work\\compare\\build\\java;<workdir>\\work\\compare\\deps\\guava-16.0.1.jar;<workdir>\\work\\compare\\deps\\commons-lang3-3.3.jar;<workdir>\\work\\compare\\deps\\jna-4.0.0.jar",
+        "mal.stepA_mal",
+        "--raw"
+      ],
+      "scala": [
+        "<workdir>\\work\\compare\\deps\\jdk8u512-b09\\bin\\java.exe",
+        "-Xms32m",
+        "-Xmx512m",
+        "-cp",
+        "<workdir>\\work\\compare\\build\\scala;<workdir>\\work\\compare\\deps\\scala-library-2.11.4.jar",
+        "stepA_mal"
+      ],
+      "javascript": [
+        "C:/soft/nodejs/node.exe",
+        "--max-old-space-size=512",
+        "-r",
+        "<workdir>\\work\\compare\\shims\\js_readline.js",
+        "<workdir>\\work\\mal\\impls\\js\\stepA_mal.js"
+      ],
+      "python": [
+        "C:/Python312/python.exe",
+        "<workdir>\\work\\compare\\shims\\python_mal.py"
+      ]
+    },
+    "sources": {
+      "bench_main.das": "63e3a79b9f32cacd1095dbb5460a25b8a10ed218b7600149a320ef7e40e16f44",
+      "line_input.das": "48e88b8282950513062d54d0cfa029356be80833b85946e83a1c98d4199e059b",
+      "main.das": "0ef4dc0343eb81385c2d8facc76b925c899e5c3f7a1aa8d3a11d0066e68e444d",
+      "memory.das": "93c66d816b1eb82e8e4e79b08c12c1fa4141999362ffe1802b7613403c08f978",
+      "printer.das": "d00821be7ffb515f1e14497456e8850890480d8bb3f16cca31141f0e96d4b818",
+      "reader.das": "46f7df3e8ad46fc32c1a54048eb80d8b4a180be93bc52461ebab2c795830e5fc",
+      "runtime.das": "4a38f713d16ff3103e309e1da30d1ecd7f66760de92e3e0d31f7304aced8eae2",
+      "types.das": "45367328213b53f14aa0618bce569c63d055662a623cb6d1b3c949afe068f9b3"
+    },
+    "fixtures": {
+      "perf1.mal": "0facb61221ec6a67718f016e65a8c785d23034a7653105f75642b7823d91c12e",
+      "perf2.mal": "be6d3558d32f2d69ce05b444e62c413686edf2a197fd8695d78b69ffde63b9f1",
+      "perf3.mal": "7f1b8124684c859326f8b9e82044c4c544a520f66f383dcf6369ee53d38cb597"
+    },
+    "results": {
+      "das-interpreter": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.36350039999524597,
+            "peak_rss_mib": 102.39453125,
+            "peak_commit_mib": 116.56640625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.3584007000026759,
+            "peak_rss_mib": 102.3125,
+            "peak_commit_mib": 116.578125,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.3592173999932129,
+            "peak_rss_mib": 102.22265625,
+            "peak_commit_mib": 116.58984375,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.36170270000002347,
+            "peak_rss_mib": 102.3828125,
+            "peak_commit_mib": 116.5078125,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.3579557000048226,
+            "peak_rss_mib": 102.18359375,
+            "peak_commit_mib": 116.4453125,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.36061329999938607,
+            "peak_rss_mib": 102.55078125,
+            "peak_commit_mib": 116.76953125,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.532444399999804,
+            "peak_rss_mib": 106.296875,
+            "peak_commit_mib": 118.69140625,
+            "elapsed_ms": null,
+            "iterations": 8611,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 8611\n",
+            "iterations_per_second": 861.1
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.521724399994127,
+            "peak_rss_mib": 106.3984375,
+            "peak_commit_mib": 118.53125,
+            "elapsed_ms": null,
+            "iterations": 8569,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 8569\n",
+            "iterations_per_second": 856.9
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.547752800004673,
+            "peak_rss_mib": 106.1796875,
+            "peak_commit_mib": 118.44140625,
+            "elapsed_ms": null,
+            "iterations": 8596,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 8596\n",
+            "iterations_per_second": 859.6
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 1.6048815999965882,
+            "peak_rss_mib": 103.703125,
+            "peak_commit_mib": 116.85546875,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 1133\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 1133,
+              "per_iteration_ms": 1.133
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 1.629683599996497,
+            "peak_rss_mib": 103.796875,
+            "peak_commit_mib": 116.5625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 1152\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 1152,
+              "per_iteration_ms": 1.152
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 1.628296800001408,
+            "peak_rss_mib": 103.5078125,
+            "peak_commit_mib": 116.56640625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 1150\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 1150,
+              "per_iteration_ms": 1.15
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 3.612755100009963,
+            "peak_rss_mib": 103.1953125,
+            "peak_commit_mib": 116.38671875,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 2943\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 2943,
+              "per_iteration_ms": 2.943
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 3.638994699998875,
+            "peak_rss_mib": 103.515625,
+            "peak_commit_mib": 116.59765625,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 3009\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 3009,
+              "per_iteration_ms": 3.009
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 3.5534151999891037,
+            "peak_rss_mib": 104.0234375,
+            "peak_commit_mib": 117.0,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 2916\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 2916,
+              "per_iteration_ms": 2.916
+            }
+          }
+        ]
+      },
+      "das-jit": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.39152719998674,
+            "peak_rss_mib": 120.55078125,
+            "peak_commit_mib": 136.8046875,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4112984000094002,
+            "peak_rss_mib": 120.53125,
+            "peak_commit_mib": 136.640625,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.38579380000010133,
+            "peak_rss_mib": 120.40234375,
+            "peak_commit_mib": 136.6015625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.38697469999897294,
+            "peak_rss_mib": 120.0234375,
+            "peak_commit_mib": 136.53125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.3864064999943366,
+            "peak_rss_mib": 120.15625,
+            "peak_commit_mib": 136.609375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.38605319999624044,
+            "peak_rss_mib": 119.95703125,
+            "peak_commit_mib": 136.52734375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.526531700001215,
+            "peak_rss_mib": 157.02734375,
+            "peak_commit_mib": 203.328125,
+            "elapsed_ms": null,
+            "iterations": 99534,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 99534\n",
+            "iterations_per_second": 9953.4
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.556840899997042,
+            "peak_rss_mib": 156.765625,
+            "peak_commit_mib": 203.171875,
+            "elapsed_ms": null,
+            "iterations": 100098,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 100098\n",
+            "iterations_per_second": 10009.8
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.543925499994657,
+            "peak_rss_mib": 157.3359375,
+            "peak_commit_mib": 203.5859375,
+            "elapsed_ms": null,
+            "iterations": 99720,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 99720\n",
+            "iterations_per_second": 9972.0
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.4900930000003427,
+            "peak_rss_mib": 123.21484375,
+            "peak_commit_mib": 139.15234375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 101\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 101,
+              "per_iteration_ms": 0.101
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.48538910000934266,
+            "peak_rss_mib": 123.75390625,
+            "peak_commit_mib": 139.3984375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 98\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 98,
+              "per_iteration_ms": 0.098
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4845225000026403,
+            "peak_rss_mib": 123.70703125,
+            "peak_commit_mib": 139.39453125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 99\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 99,
+              "per_iteration_ms": 0.099
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.6686026999959722,
+            "peak_rss_mib": 123.03125,
+            "peak_commit_mib": 139.296875,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 259\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 259,
+              "per_iteration_ms": 0.259
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6634931000007782,
+            "peak_rss_mib": 122.9140625,
+            "peak_commit_mib": 139.19921875,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 262\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 262,
+              "per_iteration_ms": 0.262
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6632592999958433,
+            "peak_rss_mib": 123.0078125,
+            "peak_commit_mib": 139.328125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 260\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 260,
+              "per_iteration_ms": 0.26
+            }
+          }
+        ]
+      },
+      "das-aot-cpp": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.06078789998719003,
+            "peak_rss_mib": 20.1484375,
+            "peak_commit_mib": 29.203125,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.05585820000851527,
+            "peak_rss_mib": 20.19140625,
+            "peak_commit_mib": 29.26953125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.055915100005222484,
+            "peak_rss_mib": 20.1328125,
+            "peak_commit_mib": 29.1796875,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.05787649999547284,
+            "peak_rss_mib": 19.82421875,
+            "peak_commit_mib": 28.8046875,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.05369299999438226,
+            "peak_rss_mib": 19.8203125,
+            "peak_commit_mib": 28.8203125,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.054086100004496984,
+            "peak_rss_mib": 19.82421875,
+            "peak_commit_mib": 28.8046875,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.202650799998082,
+            "peak_rss_mib": 49.75,
+            "peak_commit_mib": 64.01171875,
+            "elapsed_ms": null,
+            "iterations": 78927,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 78927\n",
+            "iterations_per_second": 7892.7
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.217311400003382,
+            "peak_rss_mib": 48.84375,
+            "peak_commit_mib": 64.109375,
+            "elapsed_ms": null,
+            "iterations": 75931,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 75931\n",
+            "iterations_per_second": 7593.1
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.168855600000825,
+            "peak_rss_mib": 49.51953125,
+            "peak_commit_mib": 64.01953125,
+            "elapsed_ms": null,
+            "iterations": 78344,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 78344\n",
+            "iterations_per_second": 7834.4
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.18572810001205653,
+            "peak_rss_mib": 23.390625,
+            "peak_commit_mib": 32.1953125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 125\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 125,
+              "per_iteration_ms": 0.125
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.18158089999633376,
+            "peak_rss_mib": 23.42578125,
+            "peak_commit_mib": 32.22265625,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 126\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 126,
+              "per_iteration_ms": 0.126
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.18128939998860005,
+            "peak_rss_mib": 23.5078125,
+            "peak_commit_mib": 32.30078125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 126\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 126,
+              "per_iteration_ms": 0.126
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.41416479999315925,
+            "peak_rss_mib": 22.4609375,
+            "peak_commit_mib": 32.18359375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 338\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 338,
+              "per_iteration_ms": 0.338
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4347715000039898,
+            "peak_rss_mib": 22.4296875,
+            "peak_commit_mib": 32.1875,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 341\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 341,
+              "per_iteration_ms": 0.341
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.40904040000168607,
+            "peak_rss_mib": 22.36328125,
+            "peak_commit_mib": 32.1953125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 339\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 339,
+              "per_iteration_ms": 0.339
+            }
+          }
+        ]
+      },
+      "nim": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.035361300004296936,
+            "peak_rss_mib": 6.3671875,
+            "peak_commit_mib": 2.453125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.03164889999607112,
+            "peak_rss_mib": 6.37109375,
+            "peak_commit_mib": 2.4609375,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.028682699994533323,
+            "peak_rss_mib": 6.3671875,
+            "peak_commit_mib": 2.453125,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.03404220000084024,
+            "peak_rss_mib": 7.08984375,
+            "peak_commit_mib": 3.47265625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.02882909998879768,
+            "peak_rss_mib": 7.078125,
+            "peak_commit_mib": 3.45703125,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.029854699998395517,
+            "peak_rss_mib": 7.08203125,
+            "peak_commit_mib": 3.453125,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.282696500013117,
+            "peak_rss_mib": 10.05078125,
+            "peak_commit_mib": 6.3203125,
+            "elapsed_ms": null,
+            "iterations": 49912,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 49912\n",
+            "iterations_per_second": 4991.2
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.248539100008202,
+            "peak_rss_mib": 10.046875,
+            "peak_commit_mib": 6.3046875,
+            "elapsed_ms": null,
+            "iterations": 49765,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 49765\n",
+            "iterations_per_second": 4976.5
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.28420979999646,
+            "peak_rss_mib": 10.046875,
+            "peak_commit_mib": 6.3046875,
+            "elapsed_ms": null,
+            "iterations": 49015,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 49015\n",
+            "iterations_per_second": 4901.5
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.23888599999190774,
+            "peak_rss_mib": 10.07421875,
+            "peak_commit_mib": 6.3203125,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 177\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 177,
+              "per_iteration_ms": 0.177
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.23359350000100676,
+            "peak_rss_mib": 10.0703125,
+            "peak_commit_mib": 6.31640625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 175\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 175,
+              "per_iteration_ms": 0.175
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.23167029999603983,
+            "peak_rss_mib": 10.07421875,
+            "peak_commit_mib": 6.32421875,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 175\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 175,
+              "per_iteration_ms": 0.175
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.7464445999939926,
+            "peak_rss_mib": 10.125,
+            "peak_commit_mib": 6.34765625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 645\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 645,
+              "per_iteration_ms": 0.645
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.7394076000055065,
+            "peak_rss_mib": 10.125,
+            "peak_commit_mib": 6.3515625,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 658\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 658,
+              "per_iteration_ms": 0.658
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.740159599998151,
+            "peak_rss_mib": 10.13671875,
+            "peak_commit_mib": 6.37109375,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 653\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 653,
+              "per_iteration_ms": 0.653
+            }
+          }
+        ]
+      },
+      "java": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.2612557999964338,
+            "peak_rss_mib": 46.66015625,
+            "peak_commit_mib": 155.06640625,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.28213249999680556,
+            "peak_rss_mib": 46.97265625,
+            "peak_commit_mib": 155.29296875,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.2571783999883337,
+            "peak_rss_mib": 45.57421875,
+            "peak_commit_mib": 153.9140625,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.262141100000008,
+            "peak_rss_mib": 40.921875,
+            "peak_commit_mib": 150.52734375,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.23261350000393577,
+            "peak_rss_mib": 40.421875,
+            "peak_commit_mib": 149.921875,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.2565905999945244,
+            "peak_rss_mib": 40.87890625,
+            "peak_commit_mib": 150.3125,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.538875600002939,
+            "peak_rss_mib": 230.08984375,
+            "peak_commit_mib": 337.703125,
+            "elapsed_ms": null,
+            "iterations": 245378,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 245378\n",
+            "iterations_per_second": 24537.8
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.577796300000045,
+            "peak_rss_mib": 230.09375,
+            "peak_commit_mib": 338.3125,
+            "elapsed_ms": null,
+            "iterations": 248160,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 248160\n",
+            "iterations_per_second": 24816.0
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.57987349999894,
+            "peak_rss_mib": 234.8359375,
+            "peak_commit_mib": 342.15234375,
+            "elapsed_ms": null,
+            "iterations": 244388,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 244388\n",
+            "iterations_per_second": 24438.8
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.39085210001212545,
+            "peak_rss_mib": 105.125,
+            "peak_commit_mib": 246.9453125,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 116\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 116,
+              "per_iteration_ms": 0.116
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4098826999979792,
+            "peak_rss_mib": 105.9296875,
+            "peak_commit_mib": 248.18359375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 121\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 121,
+              "per_iteration_ms": 0.121
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.38414200000988785,
+            "peak_rss_mib": 106.7109375,
+            "peak_commit_mib": 248.62109375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 116\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 116,
+              "per_iteration_ms": 0.116
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.469808900001226,
+            "peak_rss_mib": 114.6015625,
+            "peak_commit_mib": 255.765625,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 200\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 200,
+              "per_iteration_ms": 0.2
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.485797300003469,
+            "peak_rss_mib": 110.390625,
+            "peak_commit_mib": 256.87890625,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 201\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 201,
+              "per_iteration_ms": 0.201
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4594314999994822,
+            "peak_rss_mib": 112.16796875,
+            "peak_commit_mib": 256.05078125,
+            "elapsed_ms": 5,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 5 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 201\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 201,
+              "per_iteration_ms": 0.201
+            }
+          }
+        ]
+      },
+      "scala": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.4141476000077091,
+            "peak_rss_mib": 55.9453125,
+            "peak_commit_mib": 158.66796875,
+            "elapsed_ms": 11,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 11 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4353043000010075,
+            "peak_rss_mib": 56.61328125,
+            "peak_commit_mib": 159.43359375,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.4337167000048794,
+            "peak_rss_mib": 58.15625,
+            "peak_commit_mib": 169.50390625,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.4377383999963058,
+            "peak_rss_mib": 58.3046875,
+            "peak_commit_mib": 161.10546875,
+            "elapsed_ms": 11,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 11 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.43371889999252744,
+            "peak_rss_mib": 59.0234375,
+            "peak_commit_mib": 162.18359375,
+            "elapsed_ms": 11,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 11 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.40926429998944513,
+            "peak_rss_mib": 58.5078125,
+            "peak_commit_mib": 169.94921875,
+            "elapsed_ms": 13,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 13 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.654527899998357,
+            "peak_rss_mib": 259.83984375,
+            "peak_commit_mib": 368.23046875,
+            "elapsed_ms": null,
+            "iterations": 112425,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 112425\n",
+            "iterations_per_second": 11242.5
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.732629199992516,
+            "peak_rss_mib": 259.125,
+            "peak_commit_mib": 367.7109375,
+            "elapsed_ms": null,
+            "iterations": 112721,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 112721\n",
+            "iterations_per_second": 11272.1
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.733783500007121,
+            "peak_rss_mib": 258.546875,
+            "peak_commit_mib": 368.09375,
+            "elapsed_ms": null,
+            "iterations": 112439,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 112439\n",
+            "iterations_per_second": 11243.9
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.6169184000027599,
+            "peak_rss_mib": 120.15234375,
+            "peak_commit_mib": 262.9921875,
+            "elapsed_ms": 11,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 11 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 148\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 148,
+              "per_iteration_ms": 0.148
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6393499999976484,
+            "peak_rss_mib": 118.1953125,
+            "peak_commit_mib": 261.17578125,
+            "elapsed_ms": 6,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 6 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 157\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 157,
+              "per_iteration_ms": 0.157
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6128830000088783,
+            "peak_rss_mib": 122.21875,
+            "peak_commit_mib": 264.10546875,
+            "elapsed_ms": 7,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 7 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 145\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 145,
+              "per_iteration_ms": 0.145
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.6942337000073167,
+            "peak_rss_mib": 124.66015625,
+            "peak_commit_mib": 274.5078125,
+            "elapsed_ms": 10,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 10 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 200\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 200,
+              "per_iteration_ms": 0.2
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.7151696999935666,
+            "peak_rss_mib": 123.34375,
+            "peak_commit_mib": 273.765625,
+            "elapsed_ms": 7,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 7 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 200\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 200,
+              "per_iteration_ms": 0.2
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6901129999896511,
+            "peak_rss_mib": 121.93359375,
+            "peak_commit_mib": 269.7890625,
+            "elapsed_ms": 5,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 5 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 193\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 193,
+              "per_iteration_ms": 0.193
+            }
+          }
+        ]
+      },
+      "javascript": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.10842069999489468,
+            "peak_rss_mib": 32.4296875,
+            "peak_commit_mib": 14.5859375,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.10446830000728369,
+            "peak_rss_mib": 32.328125,
+            "peak_commit_mib": 14.66796875,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.10677980000036769,
+            "peak_rss_mib": 32.5390625,
+            "peak_commit_mib": 14.625,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.10722059999534395,
+            "peak_rss_mib": 32.6796875,
+            "peak_commit_mib": 15.75,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.1039154000027338,
+            "peak_rss_mib": 32.58984375,
+            "peak_commit_mib": 15.9609375,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.07914170000003651,
+            "peak_rss_mib": 32.8828125,
+            "peak_commit_mib": 15.70703125,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.392588699993212,
+            "peak_rss_mib": 94.4765625,
+            "peak_commit_mib": 78.8203125,
+            "elapsed_ms": null,
+            "iterations": 56111,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 56111\n",
+            "iterations_per_second": 5611.1
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.352866299988818,
+            "peak_rss_mib": 94.84765625,
+            "peak_commit_mib": 78.63671875,
+            "elapsed_ms": null,
+            "iterations": 55208,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 55208\n",
+            "iterations_per_second": 5520.8
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.370722499996191,
+            "peak_rss_mib": 94.60546875,
+            "peak_commit_mib": 78.546875,
+            "elapsed_ms": null,
+            "iterations": 56072,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 56072\n",
+            "iterations_per_second": 5607.2
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.31273869999859016,
+            "peak_rss_mib": 38.55078125,
+            "peak_commit_mib": 20.32421875,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 191\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 191,
+              "per_iteration_ms": 0.191
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.30882480001309887,
+            "peak_rss_mib": 38.6015625,
+            "peak_commit_mib": 20.12109375,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 180\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 180,
+              "per_iteration_ms": 0.18
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.30850409998674877,
+            "peak_rss_mib": 38.921875,
+            "peak_commit_mib": 20.9609375,
+            "elapsed_ms": 1,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 1 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 184\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 184,
+              "per_iteration_ms": 0.184
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.6396688999957405,
+            "peak_rss_mib": 37.0859375,
+            "peak_commit_mib": 19.56640625,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 485\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 485,
+              "per_iteration_ms": 0.485
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6130167999945115,
+            "peak_rss_mib": 36.9296875,
+            "peak_commit_mib": 19.0,
+            "elapsed_ms": 3,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 3 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 472\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 472,
+              "per_iteration_ms": 0.472
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.6375789000012446,
+            "peak_rss_mib": 36.9609375,
+            "peak_commit_mib": 19.45703125,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 481\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 481,
+              "per_iteration_ms": 0.481
+            }
+          }
+        ]
+      },
+      "python": {
+        "perf1": [
+          {
+            "status": "ok",
+            "wall_s": 0.16325589999905787,
+            "peak_rss_mib": 16.34765625,
+            "peak_commit_mib": 10.95703125,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.1811950999981491,
+            "peak_rss_mib": 16.37109375,
+            "peak_commit_mib": 11.0234375,
+            "elapsed_ms": 7,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 7 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.15624089998891577,
+            "peak_rss_mib": 16.19140625,
+            "peak_commit_mib": 10.8359375,
+            "elapsed_ms": 0,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 0 msecs\n"
+          }
+        ],
+        "perf2": [
+          {
+            "status": "ok",
+            "wall_s": 0.19052440000814386,
+            "peak_rss_mib": 16.3828125,
+            "peak_commit_mib": 10.98046875,
+            "elapsed_ms": 20,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 20 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.15627289999974892,
+            "peak_rss_mib": 16.2890625,
+            "peak_commit_mib": 10.90625,
+            "elapsed_ms": 14,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 14 msecs\n"
+          },
+          {
+            "status": "ok",
+            "wall_s": 0.20550250000087544,
+            "peak_rss_mib": 16.39453125,
+            "peak_commit_mib": 11.01953125,
+            "elapsed_ms": 12,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 12 msecs\n"
+          }
+        ],
+        "perf3": [
+          {
+            "status": "ok",
+            "wall_s": 11.337996000002022,
+            "peak_rss_mib": 17.95703125,
+            "peak_commit_mib": 13.0234375,
+            "elapsed_ms": null,
+            "iterations": 2999,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 2999\n",
+            "iterations_per_second": 299.9
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.37760910000361,
+            "peak_rss_mib": 17.6875,
+            "peak_commit_mib": 12.71875,
+            "elapsed_ms": null,
+            "iterations": 3023,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 3023\n",
+            "iterations_per_second": 302.3
+          },
+          {
+            "status": "ok",
+            "wall_s": 11.3915285999974,
+            "peak_rss_mib": 17.6796875,
+            "peak_commit_mib": 12.71484375,
+            "elapsed_ms": null,
+            "iterations": 3062,
+            "fixed": null,
+            "tail": null,
+            "output": "iters over 10 seconds: 3062\n",
+            "iterations_per_second": 306.2
+          }
+        ],
+        "batch-perf1": [
+          {
+            "status": "ok",
+            "wall_s": 3.7164990000019316,
+            "peak_rss_mib": 17.68359375,
+            "peak_commit_mib": 12.09375,
+            "elapsed_ms": 15,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 15 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 3234\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 3234,
+              "per_iteration_ms": 3.234
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 3.631675099997665,
+            "peak_rss_mib": 17.31640625,
+            "peak_commit_mib": 11.671875,
+            "elapsed_ms": 4,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 4 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 3158\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 3158,
+              "per_iteration_ms": 3.158
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 3.7095780999952694,
+            "peak_rss_mib": 17.69921875,
+            "peak_commit_mib": 12.10546875,
+            "elapsed_ms": 10,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 10 msecs\nBATCH perf1 iterations=1000 elapsed_ms= 3227\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 3227,
+              "per_iteration_ms": 3.227
+            }
+          }
+        ],
+        "batch-perf2": [
+          {
+            "status": "ok",
+            "wall_s": 12.67499179999868,
+            "peak_rss_mib": 16.5390625,
+            "peak_commit_mib": 10.9765625,
+            "elapsed_ms": 17,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 17 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 11360\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 11360,
+              "per_iteration_ms": 11.36
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 12.795952500004205,
+            "peak_rss_mib": 16.6015625,
+            "peak_commit_mib": 11.0625,
+            "elapsed_ms": 12,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 12 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 11487\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 11487,
+              "per_iteration_ms": 11.487
+            }
+          },
+          {
+            "status": "ok",
+            "wall_s": 12.70381800000905,
+            "peak_rss_mib": 16.54296875,
+            "peak_commit_mib": 10.9765625,
+            "elapsed_ms": 2,
+            "iterations": null,
+            "fixed": null,
+            "tail": null,
+            "output": "Elapsed time: 2 msecs\nBATCH perf2 iterations=1000 elapsed_ms= 11370\n",
+            "batch": {
+              "iterations": 1000,
+              "elapsed_ms": 11370,
+              "per_iteration_ms": 11.37
+            }
+          }
+        ]
+      }
+    }
+  },
+  "unit_tests": {
+    "interpreter_each_sdk": {
+      "core": 213,
+      "tails": 46,
+      "buffers": 161,
+      "apply_roots": 9,
+      "cli": 12,
+      "runner": 14
+    },
+    "jit": {
+      "core": 213,
+      "tails": 46,
+      "buffers": 161,
+      "apply_roots": 9
+    },
+    "sdks": [
+      "local 0.6.5",
+      "official 0.6.5-RC2"
+    ]
+  },
+  "selfhosting": {
+    "das-interpreter": [
+      {
+        "form": "(+ 2 3)",
+        "expected": "5",
+        "output": "5"
+      },
+      {
+        "form": "(do (def! walk (fn* [n a] (if (= n 0) a (walk (- n 1) (+ a 1))))) (walk 20 0))",
+        "expected": "20",
+        "output": "20"
+      },
+      {
+        "form": "(cond false 1 true 42)",
+        "expected": "42",
+        "output": "42"
+      },
+      {
+        "form": "(try* (throw [1 2]) (catch* e (first e)))",
+        "expected": "1",
+        "output": "1"
+      }
+    ],
+    "das-jit": [
+      {
+        "form": "(+ 2 3)",
+        "expected": "5",
+        "output": "5"
+      },
+      {
+        "form": "(do (def! walk (fn* [n a] (if (= n 0) a (walk (- n 1) (+ a 1))))) (walk 20 0))",
+        "expected": "20",
+        "output": "20"
+      },
+      {
+        "form": "(cond false 1 true 42)",
+        "expected": "42",
+        "output": "42"
+      },
+      {
+        "form": "(try* (throw [1 2]) (catch* e (first e)))",
+        "expected": "1",
+        "output": "1"
+      }
+    ],
+    "das-aot-cpp": [
+      {
+        "form": "(+ 2 3)",
+        "expected": "5",
+        "output": "5"
+      },
+      {
+        "form": "(do (def! walk (fn* [n a] (if (= n 0) a (walk (- n 1) (+ a 1))))) (walk 20 0))",
+        "expected": "20",
+        "output": "20"
+      },
+      {
+        "form": "(cond false 1 true 42)",
+        "expected": "42",
+        "output": "42"
+      },
+      {
+        "form": "(try* (throw [1 2]) (catch* e (first e)))",
+        "expected": "1",
+        "output": "1"
+      }
+    ]
+  },
+  "selfhosting_stress_observation": {
+    "host": "das-interpreter",
+    "steps": 2000,
+    "result": "EXCEPTION_STACK_OVERFLOW in the MAL-on-MAL smoke workload; 20-step smoke passes in all modes",
+    "scope": "not one of the performance workloads; ordinary host Lisp tail-call regression of 100000 steps passes"
+  }
+}

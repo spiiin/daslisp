@@ -1,0 +1,22 @@
+; Run: ./run.ps1 -Script examples/demo.mal
+(def! sum-to
+  (fn* [n acc]
+    (if (= n 0)
+      acc
+      (sum-to (- n 1) (+ acc n)))))
+
+(def! make-adder (fn* [x] (fn* [y] (+ x y))))
+(def! add10 (make-adder 10))
+(println "Closures:" (map add10 [1 2 3]))
+(println "Tail calls:" (sum-to 100000 0))
+
+(defmacro! unless
+  (fn* [condition & body]
+    `(if ~condition nil (do ~@body))))
+(unless false (println "Macros and quasiquote work"))
+
+(def! counter (atom 0))
+(swap! counter + 5)
+(println "Atom:" @counter)
+(println "Map:" (get {:answer 42} :answer))
+(println "Error:" (try* (throw "caught") (catch* e e)))
